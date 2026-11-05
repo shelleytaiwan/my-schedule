@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的手帳</title>
+<style>
+:root{--bg:#fff4ea;--card:#fff;--ink:#1f3a52;--mut:#7a8da0;--line:#d5e3ec;--soft:#eef5fb;--today:#fff6d6;--todayb:#ffc94d;--s0:#fff3c4;--s1:#d9f0ff;--s2:#e5dcff;--chip:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d2530;--card:#26313f;--ink:#e8eef5;--mut:#9fb0c1;--line:#3b4a5b;--soft:#2f3c4c;--today:#4a4020;--todayb:#d9a93a;--s0:#4a4222;--s1:#244257;--s2:#3b3560;--chip:#33414f}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Heiti TC","Microsoft JhengHei","Noto Sans TC",sans-serif;-webkit-user-select:none;user-select:none}
+.wrap{max-width:940px;margin:0 auto;padding:10px 12px 6px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+h1{margin:0;font-size:26px}
+button,select,input{font:inherit;font-size:14px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:5px 10px}
+button.on{background:var(--todayb);border-color:var(--todayb);color:#3a2a00;font-weight:700}
+.main{display:grid;grid-template-columns:1fr 196px;gap:10px;align-items:start}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:10px}
+.nav{display:flex;gap:6px;align-items:center;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+#lb{font-weight:800}
+.g,.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{background:var(--soft);border-radius:8px;text-align:center;font-size:11px;padding:4px 0;color:var(--mut);font-weight:700}
+.d{border:1.5px solid var(--line);border-radius:10px;padding:3px;min-height:92px;background:var(--card)}
+.d.o{opacity:.35;min-height:0;height:28px}
+.d.t{background:var(--today);border-color:var(--todayb)}
+.n{font-weight:800;font-size:13px;margin-left:2px}
+.slot{min-height:22px;border-radius:6px;margin-top:2px;padding:1px;display:flex;flex-wrap:wrap;gap:1px;align-content:flex-start}
+.slot:empty::before{content:attr(data-l);font-size:9px;color:var(--mut);padding:2px 3px}
+.s0{background:var(--s0)}.s1{background:var(--s1)}.s2{background:var(--s2)}
+.slot.hl{outline:2px dashed var(--todayb);outline-offset:-2px}
+.st,.ps{display:inline-flex;align-items:center;gap:2px;background:var(--chip);border:1px solid var(--line);border-radius:10px;touch-action:none;cursor:grab;line-height:1.1}
+.st{font-size:10px;padding:1px 3px}
+.st i{font-style:normal}
+.ps.sel{outline:2px solid var(--todayb);background:var(--today)}
+.x{cursor:pointer;color:var(--mut);padding:0 2px;font-size:11px}
+.ps{font-size:12px;padding:4px 6px}
+.pl{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:560px;overflow:auto;margin-top:6px}
+#ci{width:100%;font-size:13px;padding:5px 8px}
+h3{margin:0 0 6px;font-size:14px}
+.hint{font-size:11px;color:var(--mut);margin-bottom:6px}
+.yg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mm{cursor:pointer}.mt{color:#e8433f;font-weight:700;margin-bottom:2px}
+.g7{gap:0;font-size:11px;text-align:center}.g7 span{padding:2px 0}.g7 .t{background:#ff3b30;color:#fff;border-radius:50%}.g7 .h{color:var(--mut)}
+.wg{display:grid;grid-template-columns:44px repeat(7,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.wg>*{border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.wh{text-align:center;font-size:12px;font-weight:700;padding:5px 0;background:var(--soft)}.wh.t{background:var(--todayb);color:#3a2a00}
+.wl{font-size:10px;color:var(--mut);text-align:right;padding:2px 3px}
+.wx{background:var(--soft);min-height:12px}
+.wc{margin:0;border-radius:0;min-height:30px}
+#tip{position:fixed;display:none;z-index:9;background:var(--card);color:var(--ink);border:2px solid var(--todayb);border-radius:12px;padding:8px 12px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:230px}
+#tip .tz{font-size:22px;font-weight:800}
+#tip button{margin-top:6px;font-size:13px}
+#gh{position:fixed;display:none;z-index:10;pointer-events:none}
+footer{text-align:center;font-size:11px;color:var(--mut);margin:10px 0 4px}
+.pr{display:none}
+@media(max-width:720px){.main{grid-template-columns:1fr}aside{order:-1}.pl{max-height:120px;grid-template-columns:repeat(3,1fr)}.yg{grid-template-columns:repeat(2,1fr)}}
+@media print{@page{size:A4 landscape;margin:8mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wrap{zoom:1!important;max-width:none}aside,.nav,.seg,header .seg,#tip{display:none!important}.main{grid-template-columns:1fr}.card{border:0}
+.pr{display:block;font-size:18px;font-weight:800;margin-bottom:6px}.wc{min-height:22px}body.blank .st{display:none}}
+</style></head><body>
+<div class="wrap">
+<header><h1 id="ti"></h1><div class="seg" id="vt"></div><div class="seg"><button id="bt">繁體</button> <button id="bs">简体</button></div></header>
+<div class="main">
+<section class="card"><div class="nav"><button id="pv">‹</button><select id="ys"></select><select id="ms"></select><span id="lb"></span><button id="nx">›</button><button id="td"></button><button id="cl"></button><button id="p1"></button><button id="p2"></button></div>
+<div id="ptl" class="pr"></div><div id="cv"></div></section>
+<aside class="card"><h3 id="pt"></h3><div class="hint" id="ph"></div><input id="ci" maxlength="12" autocomplete="off"><div class="pl" id="pl"></div></aside>
+</div>
+<footer>Shelleytaiwan 製作 · 2027 · 請勿商用</footer>
+</div>
+<div id="tip"></div><div id="gh"></div>
+<script>
+// [emoji, 繁體, 简体(空=同繁體), pinyin, zhuyin, English, 日本語, 只在週檢視]
+const S=[
+["🏫","上課","上课","shàng kè","ㄕㄤˋ ㄎㄜˋ","attend class","授業に出る"],
+["📝","考試","考试","kǎo shì","ㄎㄠˇ ㄕˋ","take an exam","試験を受ける"],
+["⚽","打球","","dǎ qiú","ㄉㄚˇ ㄑㄧㄡˊ","play ball games","球技をする"],
+["🍽️","聚餐","","jù cān","ㄐㄩˋ ㄘㄢ","get together for a meal","会食する"],
+["💼","工作","","gōng zuò","ㄍㄨㄥ ㄗㄨㄛˋ","work","仕事をする"],
+["❤️","約會","约会","yuē huì","ㄩㄝ ㄏㄨㄟˋ","go on a date","デートする"],
+["📚","備課","备课","bèi kè","ㄅㄟˋ ㄎㄜˋ","prepare lessons","授業の準備をする"],
+["🎂","生日","","shēng rì","ㄕㄥ ㄖˋ","birthday","誕生日"],
+["✈️","旅行","","lǚ xíng","ㄌㄩˇ ㄒㄧㄥˊ","travel","旅行する"],
+["⛰️","爬山","","pá shān","ㄆㄚˊ ㄕㄢ","climb a mountain","山登りをする"],
+["🥾","健行","","jiàn xíng","ㄐㄧㄢˋ ㄒㄧㄥˊ","go hiking","ハイキングをする"],
+["🚶","散步","","sàn bù","ㄙㄢˋ ㄅㄨˋ","take a walk","散歩する"],
+["💃","跳舞","","tiào wǔ","ㄊㄧㄠˋ ㄨˇ","dance","踊る"],
+["🏋️","健身","","jiàn shēn","ㄐㄧㄢˋ ㄕㄣ","work out","ジムで運動する"],
+["🏮","居酒屋","","jū jiǔ wū","ㄐㄩ ㄐㄧㄡˇ ㄨ","go to an izakaya","居酒屋に行く"],
+["🎤","卡拉OK","","kǎ lā OK","ㄎㄚˇ ㄌㄚ OK","karaoke","カラオケ"],
+["🏃","跑步","","pǎo bù","ㄆㄠˇ ㄅㄨˋ","go jogging","ジョギングする"],
+["🀄","學中文","学中文","xué zhōng wén","ㄒㄩㄝˊ ㄓㄨㄥ ㄨㄣˊ","study Chinese","中国語を勉強する"],
+["📖","看書","看书","kàn shū","ㄎㄢˋ ㄕㄨ","read a book","本を読む"],
+["✏️","寫作業","写作业","xiě zuò yè","ㄒㄧㄝˇ ㄗㄨㄛˋ ㄧㄝˋ","do homework","宿題をする"],
+["📒","改作業","改作业","gǎi zuò yè","ㄍㄞˇ ㄗㄨㄛˋ ㄧㄝˋ","grade homework","宿題を添削する"],
+["✅","改考卷","","gǎi kǎo juàn","ㄍㄞˇ ㄎㄠˇ ㄐㄩㄢˋ","grade exams","試験を採点する"],
+["🖨️","出考卷","","chū kǎo juàn","ㄔㄨ ㄎㄠˇ ㄐㄩㄢˋ","write an exam","試験問題を作る"],
+["📺","看電視","看电视","kàn diàn shì","ㄎㄢˋ ㄉㄧㄢˋ ㄕˋ","watch TV","テレビを見る"],
+["🎬","看電影","看电影","kàn diàn yǐng","ㄎㄢˋ ㄉㄧㄢˋ ㄧㄥˇ","watch a movie","映画を見る"],
+["🎉","家庭派對","家庭派对","jiā tíng pài duì","ㄐㄧㄚ ㄊㄧㄥˊ ㄆㄞˋ ㄉㄨㄟˋ","family party","家族パーティー"],
+["🛍️","逛街","","guàng jiē","ㄍㄨㄤˋ ㄐㄧㄝ","go window shopping","街をぶらぶらする"],
+["🏛️","去圖書館","去图书馆","qù tú shū guǎn","ㄑㄩˋ ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ","go to the library","図書館に行く"],
+["🖼️","去博物館","去博物馆","qù bó wù guǎn","ㄑㄩˋ ㄅㄛˊ ㄨˋ ㄍㄨㄢˇ","go to the museum","博物館に行く"],
+["🥬","買菜","买菜","mǎi cài","ㄇㄞˇ ㄘㄞˋ","buy groceries","食料品を買う"],
+["📷","照相","","zhào xiàng","ㄓㄠˋ ㄒㄧㄤˋ","take photos","写真を撮る"],
+["🌃","逛夜市","","guàng yè shì","ㄍㄨㄤˋ ㄧㄝˋ ㄕˋ","visit a night market","夜市をぶらぶらする"],
+["🍜","吃美食","","chī měi shí","ㄔ ㄇㄟˇ ㄕˊ","eat good food","グルメを楽しむ"],
+["🛒","買東西","买东西","mǎi dōng xi","ㄇㄞˇ ㄉㄨㄥ ˙ㄒㄧ","go shopping","買い物をする"],
+["😴","睡覺","睡觉","shuì jiào","ㄕㄨㄟˋ ㄐㄧㄠˋ","sleep","寝る",1],
+["🍚","吃飯","吃饭","chī fàn","ㄔ ㄈㄢˋ","eat a meal","ご飯を食べる",1]];
+const IC=[['飯|饭|吃|餐|食|麵|面|肉|菜|煮|廚|厨','🍽️'],['茶|咖啡|喝|飲|饮|水','🥤'],['睡|休息','😴'],['書|书|讀|读|閱|阅','📖'],['寫|写|作業|作业|功課|功课','✏️'],['運動|运动|球|游泳|健身','🏃'],['車|车|捷運|地铁|公車|公交|火車|火车','🚌'],['飛|飞|機場|机场','✈️'],['電話|电话','📞'],['電影|电影|電視|电视','🎬'],['音樂|音乐|歌|唱','🎵'],['買|买|逛|店|超市','🛍️'],['洗澡|洗','🛁'],['課|课|學|学|校','🏫'],['班|公司|會議|会议|工作','💼'],['醫|医|病|藥|药','🏥'],['玩|遊戲|游戏','🎮'],['朋友|見面|见面|約|约','🤝'],['家|回家','🏠'],['打掃|打扫|洗衣','🧹'],['畫|画|藝|艺','🎨'],['狗|貓|猫|寵物|宠物','🐶'],['拍|照|相','📷'],['旅','🧳']];
+const guess=t=>{for(const[r,e]of IC)if(new RegExp(r).test(t))return e;return'⭐'};
+const $=q=>document.querySelector(q);
+const now=new Date(),NY=now.getFullYear(),LO=Math.min(2027,NY),HI=2035;
+const sun=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()-d.getDay());
+let st={y:NY,m:now.getMonth(),tr:1,d:{},c:[],cn:0,v:'m',wd:sun(now),sel:null};
+try{const o=JSON.parse(localStorage.getItem('shouzhang'));if(o){st.d=o.d||{};st.tr=o.tr===0?0:1;st.c=o.c||[];st.cn=o.cn||0}}catch(e){}
+const save=()=>{try{localStorage.setItem('shouzhang',JSON.stringify({d:st.d,tr:st.tr,c:st.c,cn:st.cn}))}catch(e){}};
+const T=(a,b)=>st.tr?a:b;
+const nm=i=>st.tr?S[i][1]:(S[i][2]||S[i][1]);
+const Z=['上午','下午','晚上'],HS=[0,1,'c',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+const M=['一','二','三','四','五','六','七','八','九','十','十一','十二'].map(x=>x+'月');
+const W=['日','一','二','三','四','五','六'];
+const key=(y,m,d)=>y+'-'+(m+1)+'-'+d,dk=d=>key(d.getFullYear(),d.getMonth(),d.getDate());
+const info=id=>{if(id>=100){const c=st.c.find(x=>x.id===id);return c&&{e:c.e,n:c.t}}return{e:S[id][0],n:nm(id)}};
+const stk=(id,f)=>{const o=info(id);if(!o)return'';return`<span class="${f===undefined?'ps'+(st.sel===id?' sel':''):'st'}" data-s="${id}"${f?` data-f="${f}"`:''}>${o.e}<i>${o.n}</i>${f?'<b class="x">×</b>':(id>=100?`<b class="x" data-cd="${id}">×</b>`:'')}</span>`};
+const slot=(k,p,cls,l)=>`<div class="slot ${cls}" data-k="${k}" data-p="${p}"${l?` data-l="${l}"`:''}>${((st.d[k]||{})[p]||[]).map((id,i)=>stk(id,k+'|'+p+'|'+i)).join('')}</div>`;
+const wkDays=()=>[...Array(7)].map((_,i)=>new Date(st.wd.getFullYear(),st.wd.getMonth(),st.wd.getDate()+i));
+const tk=dk(now);
+function label(){const a=wkDays(),f=a[0],l=a[6];return `${f.getFullYear()}年${f.getMonth()+1}月${f.getDate()}日 – ${l.getMonth()+1}月${l.getDate()}日`}
+function render(){
+  $('#ti').textContent='📒 '+T('我的手帳','我的手账');
+  document.documentElement.lang=T('zh-Hant','zh-Hans');document.title=T('我的手帳','我的手账');
+  document.body.style.fontFamily=st.tr?'"PingFang TC","Heiti TC","Microsoft JhengHei","Noto Sans TC",sans-serif':'"PingFang SC","Heiti SC","Microsoft YaHei","Noto Sans SC",sans-serif';
+  $('#bt').classList.toggle('on',!!st.tr);$('#bs').classList.toggle('on',!st.tr);
+  $('#vt').innerHTML=[['w',T('週','周')],['m','月'],['y','年']].map(([v,t])=>`<button data-v="${v}" class="${st.v===v?'on':''}">${t}</button>`).join(' ');
+  let yo='';for(let y=LO;y<=HI;y++)if(y>=2027||y===NY)yo+=`<option value="${y}">${y}年</option>`;
+  if(st.y<LO||st.y>HI)yo+=`<option value="${st.y}">${st.y}年</option>`;
+  $('#ys').innerHTML=yo;$('#ys').value=st.y;
+  $('#ms').innerHTML=M.map((n,i)=>`<option value="${i}">${n}</option>`).join('');$('#ms').value=st.m;
+  $('#ys').style.display=st.v==='w'?'none':'';$('#ms').style.display=st.v==='m'?'':'none';
+  $('#lb').textContent=st.v==='w'?label():'';
+  $('#td').textContent=T('今天','今天');$('#cl').textContent=T('清除活動','清除活动');$('#cl').style.display=st.v==='y'?'none':'';
+  $('#p1').textContent='📄 '+T('PDF（含活動）','PDF（含活动）');$('#p2').textContent='📄 '+T('PDF（空白表）','PDF（空白表）');
+  $('#pt').textContent='✨ '+T('活動貼紙','活动贴纸');
+  $('#ph').textContent=T('點擊貼紙放進手帳的時段','点击贴纸放进手账的时段');
+  $('#ci').placeholder='✏️ '+T('自己寫，按 Enter','自己写，按 Enter');
+  $('#ptl').textContent=(st.v==='m'?st.y+'年'+M[st.m]:st.v==='y'?st.y+'年':label())+'　　'+T('姓名','姓名')+'：__________';
+  $('#cv').innerHTML=st.v==='m'?monthH():st.v==='y'?yearH():weekH();
+  $('#pl').innerHTML=S.map((r,i)=>r[7]&&st.v!=='w'?'':stk(i)).join('')+st.c.map(c=>stk(c.id)).join('');
+}
+function monthH(){
+  const first=new Date(st.y,st.m,1).getDay(),dim=new Date(st.y,st.m+1,0).getDate(),rows=Math.ceil((first+dim)/7);
+  let h=`<div class="g">${W.map(w=>`<div class="wd">星期${w}</div>`).join('')}</div><div class="g" style="margin-top:4px">`;
+  for(let c=0;c<rows*7;c++){const n=c-first+1;
+    if(n<1||n>dim){h+=`<div class="d o"><div class="n">${new Date(st.y,st.m,n).getDate()}</div></div>`;continue}
+    const k=key(st.y,st.m,n);
+    h+=`<div class="d${k===tk?' t':''}"><div class="n">${n}</div>`+[0,1,2].map(p=>slot(k,p,'s'+p,Z[p])).join('')+'</div>'}
+  return h+'</div>'}
+function yearH(){let h='<div class="yg">';
+  for(let m=0;m<12;m++){const first=new Date(st.y,m,1).getDay(),dim=new Date(st.y,m+1,0).getDate();
+    h+=`<div class="mm" data-mi="${m}"><div class="mt">${m+1}月</div><div class="g7">${W.map(w=>`<span class="h">${w}</span>`).join('')}${'<span></span>'.repeat(first)}`+
+    [...Array(dim)].map((_,i)=>`<span${key(st.y,m,i+1)===tk?' class="t"':''}>${i+1}</span>`).join('')+'</div></div>'}
+  return h+'</div>'}
+function weekH(){const ds=wkDays();
+  let h='<div class="wg"><div></div>'+ds.map((d,i)=>`<div class="wh${dk(d)===tk?' t':''}">${d.getDate()} ${T('週','周')}${W[i]}</div>`).join('');
+  for(const hr of HS){
+    if(hr==='c'){h+='<div class="wl">2–5</div>'+'<div class="wx"></div>'.repeat(7);continue}
+    h+=`<div class="wl">${hr}:00</div>`+ds.map(d=>slot(dk(d),'h'+hr,'wc')).join('')}
+  return h+'</div>'}
+function setV(v){
+  if(v===st.v)return;
+  if(v==='w'){const base=(st.y===NY&&st.m===now.getMonth())?now:new Date(st.y,st.m,1);st.wd=sun(base)}
+  else if(st.v==='w'){const t=new Date(st.wd.getFullYear(),st.wd.getMonth(),st.wd.getDate()+3);st.y=t.getFullYear();st.m=t.getMonth()}
+  st.v=v;render()}
+function go(n){
+  if(st.v==='w'){const d=new Date(st.wd.getFullYear(),st.wd.getMonth(),st.wd.getDate()+7*n);if(d.getFullYear()<LO||d.getFullYear()>HI)return;st.wd=d}
+  else if(st.v==='y'){const y=st.y+n;if(y<LO||y>HI)return;st.y=y}
+  else{let m=st.m+n,y=st.y;if(m<0){m=11;y--}if(m>11){m=0;y++}if(y<LO||y>HI)return;st.m=m;st.y=y}
+  render()}
+$('#bt').onclick=()=>{st.tr=1;save();render()};$('#bs').onclick=()=>{st.tr=0;save();render()};
+$('#ys').onchange=e=>{st.y=+e.target.value;render()};$('#ms').onchange=e=>{st.m=+e.target.value;render()};
+$('#pv').onclick=()=>go(-1);$('#nx').onclick=()=>go(1);
+$('#td').onclick=()=>{st.y=NY;st.m=now.getMonth();st.wd=sun(now);render()};
+$('#cl').onclick=()=>{if(!confirm(T('清除目前畫面的所有活動？','清除当前画面的所有活动？')))return;
+  const wk=st.v==='w',ks=wk?wkDays().map(dk):[...Array(new Date(st.y,st.m+1,0).getDate())].map((_,i)=>key(st.y,st.m,i+1));
+  for(const k of ks){const D=st.d[k];if(D)for(const p in D)if((p[0]==='h')===wk)delete D[p]}save();render()};
+function pdf(b){document.body.classList.toggle('blank',b);try{print()}catch(e){alert(T('請用瀏覽器的「列印」→「存成 PDF」','请用浏览器的「打印」→「存成 PDF」'))}}
+addEventListener('afterprint',()=>document.body.classList.remove('blank'));
+$('#p1').onclick=()=>pdf(false);$('#p2').onclick=()=>pdf(true);
+$('#ci').addEventListener('keydown',e=>{if(e.key!=='Enter'||e.isComposing)return;const t=e.target.value.trim();if(!t)return;
+  st.c.push({id:100+(++st.cn),e:guess(t),t});e.target.value='';save();render()});
+// tooltip: speaks only when 🔊 is pressed
+let ht=null,cur='';
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-TW';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+function showTip(el){clearTimeout(ht);const id=+el.dataset.s,tip=$('#tip'),o=info(id);if(!o)return;
+  cur=id>=100?o.n:S[id][1];const x=id<100&&S[id];
+  tip.innerHTML=`<div class="tz">${o.e} ${o.n}</div>`+(x?`<div>${x[3]}</div>${st.tr?`<div>${x[4]}</div>`:''}<div>EN　${x[5]}</div><div>日　${x[6]}</div>`:'')+`<button id="sp">🔊 ${T('朗讀','朗读')}</button>`;
+  tip.style.display='block';
+  const r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+  let t=r.bottom-2;if(t+h>innerHeight-8)t=Math.max(8,r.top-h+2);
+  tip.style.left=Math.min(Math.max(8,r.left),innerWidth-w-8)+'px';tip.style.top=t+'px'}
+const hideTip=()=>{clearTimeout(ht);$('#tip').style.display='none'};
+$('#tip').addEventListener('pointerenter',()=>clearTimeout(ht));
+$('#tip').addEventListener('pointerleave',hideTip);
+document.addEventListener('pointerover',e=>{if(e.pointerType!=='mouse'||dr)return;const el=e.target.closest('[data-s]');if(el)showTip(el)});
+document.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&e.target.closest('[data-s]')){clearTimeout(ht);ht=setTimeout(hideTip,350)}});
+// drag, or tap a sticker then tap a time slot (easier on phones)
+let dr=null,lastDrag=0;const gh=$('#gh');
+const clrHl=()=>document.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl'));
+const put=(s,id)=>{const k=s.dataset.k,p=s.dataset.p;st.d[k]=st.d[k]||{};st.d[k][p]=st.d[k][p]||[];st.d[k][p].push(id)};
+document.addEventListener('pointerdown',e=>{
+  if(e.target.closest('#tip'))return;
+  if(e.target.closest('.x'))return;
+  const el=e.target.closest('[data-s]');
+  if(!el){hideTip();return}
+  dr={id:+el.dataset.s,from:el.dataset.f||null,x:e.clientX,y:e.clientY,on:false};
+  if(e.pointerType!=='mouse')showTip(el)});
+document.addEventListener('pointermove',e=>{
+  if(!dr)return;
+  if(!dr.on){if(Math.hypot(e.clientX-dr.x,e.clientY-dr.y)<6)return;dr.on=true;hideTip();gh.innerHTML=stk(dr.id,'');gh.firstChild.className='st';gh.style.display='block'}
+  gh.style.left=e.clientX+8+'px';gh.style.top=e.clientY+8+'px';
+  clrHl();const s=document.elementFromPoint(e.clientX,e.clientY)?.closest('.slot');if(s)s.classList.add('hl')});
+document.addEventListener('pointercancel',()=>{dr=null;gh.style.display='none';clrHl()});
+document.addEventListener('pointerup',e=>{
+  if(!dr)return;const d=dr;dr=null;gh.style.display='none';clrHl();
+  if(!d.on){if(!d.from){st.sel=st.sel===d.id?null:d.id;$('#pl').innerHTML=S.map((r,i)=>r[7]&&st.v!=='w'?'':stk(i)).join('')+st.c.map(c=>stk(c.id)).join('')}return}
+  lastDrag=Date.now();
+  const s=document.elementFromPoint(e.clientX,e.clientY)?.closest('.slot');
+  if(d.from){const[k,p,i]=d.from.split('|');st.d[k][p].splice(+i,1)}
+  if(s)put(s,d.id);
+  save();render()});
+document.addEventListener('click',e=>{
+  const t=e.target;
+  if(t.id==='sp'){say(cur);return}
+  const v=t.closest('[data-v]');if(v){setV(v.dataset.v);return}
+  const mm=t.closest('[data-mi]');if(mm){st.m=+mm.dataset.mi;st.v='m';render();return}
+  if(t.classList.contains('x')){
+    if(t.dataset.cd){const id=+t.dataset.cd;st.c=st.c.filter(c=>c.id!==id);if(st.sel===id)st.sel=null}
+    else{const[k,p,i]=t.closest('[data-f]').dataset.f.split('|');st.d[k][p].splice(+i,1)}
+    save();hideTip();render();return}
+  const s=t.closest('.slot');
+  if(s&&!t.closest('[data-s]')&&st.sel!=null&&Date.now()-lastDrag>150){put(s,st.sel);save();render()}});
+function fit(){const s=Math.max(1,Math.min(2.2,innerWidth*0.94/940));$('.wrap').style.zoom=s}
+addEventListener('resize',fit);fit();
+render();
+</script></body></html>
